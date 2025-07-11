@@ -51,7 +51,7 @@ This API allows you to:
 
 ### Create Payment
 ```
-GET /api/payments/create-payment?bank=mp&method=...&token=...&amount=...&description=...&email=...&accessToken=...
+GET /api/payments/create-payment?bank=mp&method=...&token=...&amount=...&description=...&email=...
 ```
 - Returns payment creation result (MercadoPago)
 
