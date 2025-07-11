@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Info</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen flex items-center justify-center bg-black font-sans relative select-none">
+    <div class="pointer-events-none select-none">
+      <div class="fixed left-0 top-1/4 w-32 h-32 bg-purple-700 opacity-30 rounded-full blur-2xl"></div>
+      <div class="fixed right-0 bottom-1/4 w-24 h-24 bg-fuchsia-800 opacity-20 rounded-full blur-2xl"></div>
+    </div>
+    <main class="flex flex-col items-center justify-center text-center px-6 py-12 z-10 relative w-full max-w-5xl mx-auto">
+      <span class="mb-6">
+        <% if (status==='approved' ) { %>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" stroke="#a21caf" stroke-width="4" fill="#18181b" />
+            <path d="M26 42l10 10 18-18" stroke="#a21caf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        <% } else if (status==='pending' ) { %>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" stroke="#facc15" stroke-width="4" fill="#18181b" />
+            <path d="M40 24v16l10 10" stroke="#facc15" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        <% } else if (status==='rejected' ) { %>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" stroke="#ef4444" stroke-width="4" fill="#18181b" />
+            <path d="M28 28l24 24M52 28l-24 24" stroke="#ef4444" stroke-width="4" stroke-linecap="round" fill="none" />
+          </svg>
+        <% } else { %>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" stroke="#a1a1aa" stroke-width="4" fill="#18181b" />
+            <circle cx="40" cy="54" r="3" fill="#a1a1aa" />
+            <rect x="37" y="28" width="6" height="16" rx="3" fill="#a1a1aa" />
+          </svg>
+        <% } %>
+      </span>
+      <h1 class="text-4xl font-extrabold text-white mb-2 tracking-tight">Payment Information</h1>
+      <h2 class="text-lg md:text-xl font-semibold text-gray-300 mb-8">Status: <span class="<%= status === 'approved' ? 'text-purple-400' : status === 'pending' ? 'text-yellow-400' : status === 'rejected' ? 'text-red-400' : 'text-gray-400' %>"><%= status %></span></h2>
+      <div class="flex flex-col md:flex-row gap-8 w-full justify-center items-stretch">
+        <div class="flex-1 bg-gradient-to-br from-zinc-900 via-black to-purple-950 border border-purple-900 rounded-2xl shadow-xl p-8 flex flex-col justify-center mb-8 md:mb-0">
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+              <span class="text-gray-400 font-medium">Payment ID:</span>
+              <span class="text-white font-mono text-lg"><%= paymentId %></span>
+            </div>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+              <span class="text-gray-400 font-medium">Approved:</span>
+              <span class="<%= approved ? 'text-purple-400' : 'text-gray-400' %> font-semibold"><%= approved ? 'Yes' : 'No' %></span>
+            </div>
+            <% if (typeof detail !== 'undefined' && detail) { %>
+              <% const description = detail?.description; %>
+              <% const amount = detail?.transaction_amount; %>
+              <% const currency = detail?.currency_id; %>
+              <% const payment_method = detail?.payment_method_id; %>
+              <% if (description) { %>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                  <span class="text-gray-400 font-medium">Description:</span>
+                  <span class="text-white font-semibold"><%= description %></span>
+                </div>
+              <% } %>
+              <% if (amount && currency) { %>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                  <span class="text-gray-400 font-medium">Amount:</span>
+                  <span class="text-white font-semibold"><%= amount %> <%= currency %></span>
+                </div>
+              <% } %>
+              <% if (payment_method) { %>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                  <span class="text-gray-400 font-medium">Payment Method:</span>
+                  <span class="text-white font-semibold uppercase"><%= payment_method %></span>
+                </div>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+        <% if (typeof detail !== 'undefined' && detail) { %>
+          <% const qr = detail?.point_of_interaction?.transaction_data?.qr_code_base64; %>
+          <% const qr_code = detail?.point_of_interaction?.transaction_data?.qr_code; %>
+          <% const ticket_url = detail?.point_of_interaction?.transaction_data?.ticket_url; %>
+          <div class="flex-1 bg-gradient-to-br from-black via-zinc-900 to-purple-950 border border-purple-900 rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center min-w-[320px]">
+            <% if (qr) { %>
+              <div class="flex flex-col items-center mb-6 w-full">
+                <span class="text-purple-300 font-medium mb-2">PIX QR Code</span>
+                <div class="bg-white rounded-xl p-3 shadow-lg border border-purple-200 flex flex-col items-center">
+                  <img src="data:image/png;base64,<%= qr %>" alt="PIX QR Code" class="w-48 h-48 rounded-lg" />
+                </div>
+                <% if (qr_code) { %>
+                  <button onclick="navigator.clipboard.writeText('<%= qr_code %>');this.innerText='Copied!';setTimeout(()=>this.innerText='Copy Code',1500);" class="mt-3 px-4 py-2 bg-purple-700 text-white font-semibold rounded shadow hover:bg-purple-800 transition-all duration-200">Copy Code</button>
+                  <div class="mt-2 text-xs text-gray-400 break-all max-w-xs"><%= qr_code %></div>
+                <% } %>
+              </div>
+            <% } %>
+            <% if (ticket_url) { %>
+              <a href="<%= ticket_url %>" target="_blank" class="mt-2 inline-block px-6 py-2 bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white font-semibold rounded-lg shadow hover:from-purple-800 hover:to-fuchsia-800 transition-all duration-200">View Ticket</a>
+            <% } %>
+            <div class="mt-6 w-full flex flex-col items-start">
+              <div class="flex items-center mb-2 gap-2">
+                <h3 class="text-purple-300 font-semibold">Details (JSON)</h3>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('json-detail').innerText);this.innerText='Copied!';setTimeout(()=>this.innerText='Copy JSON',1500);" class="px-3 py-1 bg-purple-700 text-white text-xs rounded shadow hover:bg-purple-800 transition-all duration-200">Copy JSON</button>
+              </div>
+              <pre id="json-detail" class="w-full text-left text-sm md:text-xs font-mono whitespace-pre-wrap break-all bg-gradient-to-br from-black via-zinc-900 to-purple-950 border border-purple-700 rounded-2xl p-4 shadow-inner text-purple-100 max-h-72 overflow-auto select-text">
+<%= JSON.stringify(detail, null, 2) %>
+              </pre>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <a href="/" class="mt-10 inline-block px-8 py-3 bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white font-semibold rounded-lg shadow-lg hover:from-purple-800 hover:to-fuchsia-800 transition-all duration-200">Go Home</a>
+    </main>
+  </body>
+</html>
